@@ -1,0 +1,30 @@
+- name: Build {{ image_name }} Docker image
+  community.docker.docker_image:
+    name: "{{ image_name }}"
+    source: build
+    build:
+      path: "{{ project_path }}/{{ app_folder }}"
+    tag: "{{ image_tag }}"
+  register: build_result
+
+- name: Debug build result
+  ansible.builtin.debug:
+    var: build_result
+
+- name: Run {{ image_name }} Docker container
+  community.docker.docker_container:
+    name: "{{ container_name }}"
+    image: "{{ image_name }}:{{ image_tag }}"
+    state: healthy
+    ports:
+      - "8080:8080"
+    restart_policy: unless-stopped
+
+- name: Verify {{ container_name }} container is running
+  community.docker.docker_container_info:
+    name: "{{ container_name }}"
+  register: container_info
+
+- name: Debug container info
+  ansible.builtin.debug:
+    var: container_info

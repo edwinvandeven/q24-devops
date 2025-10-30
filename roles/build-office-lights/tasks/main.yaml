@@ -1,0 +1,36 @@
+- name: Install go 1.22
+  ansible.builtin.apt:
+    name: golang-1.22
+    state: present
+    update_cache: yes
+
+- name: Ensure /usr/local/bin/go symlink points to go1.22
+  ansible.builtin.file:
+    src: /usr/lib/go-1.22/bin/go
+    dest: /usr/local/bin/go
+    state: link
+
+- name: Verify go installation
+  ansible.builtin.command: go version
+  register: go_version
+
+- name: Print go version
+  ansible.builtin.debug:
+    msg: "{{ go_version.stdout }}"  
+
+- name: Clone office-lights repository
+  ansible.builtin.git:
+    repo: 'https://github.com/edwinvandeven/q24-devops.git'
+    dest: "{{ project_path }}"
+    version: main
+    force: yes
+    
+- name: Fetch go modules
+  ansible.builtin.command: go mod tidy
+  args:
+    chdir: "{{ project_path }}/{{ app_folder }}"
+
+- name: Build office-lights binary
+  ansible.builtin.command: go build .
+  args:
+    chdir: "{{ project_path }}/{{ app_folder }}"

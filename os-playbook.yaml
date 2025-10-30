@@ -1,0 +1,7 @@
+---
+- name: Run helloworld application in Docker container
+  hosts: all
+  become: yes
+  roles:
+    - role: docker-aliases
+    - role: topsecret

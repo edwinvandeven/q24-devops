@@ -1,0 +1,6 @@
+---
+container_name: helloworld
+image_name: helloworld
+image_tag: v0.0.1
+project_path: /projects
+app_folder: helloworld

@@ -1,0 +1,55 @@
+# Based on https://docs.docker.com/engine/install/ubuntu/
+
+- name: Install required packages for docker engine
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: yes
+
+- name: Create keyring directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download Docker's signing key and save it
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+  register: result
+
+- ansible.builtin.debug:
+    msg: "{{ result }}"
+
+- name: Stat docker.asc file
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/docker.asc
+  register: docker_keyring
+
+- ansible.builtin.debug:
+    msg: "Docker keyring exists: {{ docker_keyring.stat.exists }}"
+  
+- name: Set up the Docker repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker
+  register: result
+
+- ansible.builtin.debug:
+    msg: "{{ result }}"
+
+- name: Stat docker.list file
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/docker.list
+  register: docker_list
+
+- ansible.builtin.debug:
+    msg: "Docker list exists: {{ docker_list.stat.exists }}"
+
+- name: Update apt cache after adding Docker repo
+  ansible.builtin.apt:
+    update_cache: yes

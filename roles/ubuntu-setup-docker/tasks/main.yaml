@@ -1,0 +1,5 @@
+- name: Set up the Docker repository
+  import_tasks: setup-repo.yaml
+
+- name: Install required packages for docker engine & start service
+  import_tasks: install-packages.yaml

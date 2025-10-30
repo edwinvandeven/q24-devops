@@ -1,0 +1,10 @@
+# This playbook builds the Office Lights application by first cloning the repository 
+# and then building the application using the build-office-lights role.
+
+---
+- name: Build Office Lights Application
+  hosts: all
+  become: yes
+  roles:
+    - role: clone-repo
+    - role: build-office-lights

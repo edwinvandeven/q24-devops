@@ -1,0 +1,7 @@
+- name: "Clone {{ repo_url }} into {{ project_path }}"
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ project_path }}"
+    version: main
+    force: yes
+

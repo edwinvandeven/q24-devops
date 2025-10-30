@@ -1,0 +1,40 @@
+    - hosts: all
+      tasks:
+      # Install ASDF
+      - name: Git clone ASDF
+        become_user: vagrant
+        ansible.builtin.git:
+          repo: 'https://github.com/asdf-vm/asdf.git'
+          dest: "/home/vagrant/.asdf"
+          version: "v0.14.0"
+
+      - name: Add ASDF to .bashrc
+        become_user: vagrant
+        ansible.builtin.lineinfile:
+          path: /home/vagrant/.bashrc
+          line: '. /home/vagrant/.asdf/asdf.sh'
+          insertafter: EOF
+
+      - name: Add ASDF bash-completion to .bashrc
+        become_user: vagrant
+        ansible.builtin.lineinfile:
+          path: /home/vagrant/.bashrc
+          line: '. /home/vagrant/.asdf/completions/asdf.bash'
+          insertafter: EOF
+
+      - name: Install ASDF Java plugin
+        become_user: vagrant
+        ansible.builtin.shell: |
+          source /home/vagrant/.bashrc
+          /home/vagrant/.asdf/bin/asdf plugin add java
+        args:
+          executable: /bin/bash
+
+      - name: Install Java with ASDF and set it as global default
+        become_user: vagrant
+        ansible.builtin.shell: |
+          source /home/vagrant/.bashrc
+          /home/vagrant/.asdf/bin/asdf install java temurin-21.0.2+13.0.LTS
+          /home/vagrant/.asdf/bin/asdf global java temurin-21.0.2+13.0.LTS
+        args:
+          executable: /bin/bash

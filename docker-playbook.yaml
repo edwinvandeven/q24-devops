@@ -1,0 +1,6 @@
+---
+- name: Setup docker on Ubuntu
+  hosts: all
+  become: yes
+  roles:
+    - role: ubuntu-setup-docker

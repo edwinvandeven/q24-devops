@@ -1,0 +1,7 @@
+- name: Create Docker global aliases
+  ansible.builtin.template:
+    src: 00-docker-aliases.sh.j2
+    dest: /etc/profile.d/00-docker-aliases.sh
+    owner: root
+    group: root
+    mode: '0755'

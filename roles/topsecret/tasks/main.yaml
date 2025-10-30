@@ -1,0 +1,7 @@
+- name: Create /etc/topsecret.txt file
+  ansible.builtin.template:
+    src: topsecret.txt.j2
+    dest: /etc/topsecret.txt
+    owner: root
+    group: root
+    mode: '0400'
