@@ -4,7 +4,7 @@
     state: present
     update_cache: yes
 
-- name: Ensure /usr/local/bin/go symlink points to go1.22
+- name: Ensure /usr/local/bin/go symlink points to go 1.22
   ansible.builtin.file:
     src: /usr/lib/go-1.22/bin/go
     dest: /usr/local/bin/go

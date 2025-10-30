@@ -1,0 +1,60 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - helloworld/**
+      - .github/workflows/docker-image.yml
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - helloworld/**
+      - .github/workflows/docker-image.yml
+      
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: |
+        cd helloworld
+        export IMAGETAG=helloworld:v$(date +%s)
+        echo $IMAGETAG        
+        docker build . --file Dockerfile --tag $IMAGETAG
+        docker image save $IMAGETAG -o /opt/helloworld.tar
+
+    - name: Aqua Security Trivy
+      # You may pin to the exact commit or the version.
+      # uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+      uses: aquasecurity/trivy-action@0.33.1
+      with:
+        # Scan type to use for scanning vulnerability
+        scan-type: image
+        # reference of tar file to scan
+        input: /opt/helloworld.tar
+        # writes results to a file with the specified file name
+        output: /opt/helloworld_scan_results.txt
+
+    - name: Upload docker image tar
+      uses: actions/upload-artifact@v5.0.0
+      with:
+        # Artifact name
+        name: helloworld.tar
+        # A file, directory or wildcard pattern that describes what to upload
+        path: /opt/helloworld.tar
+        # The desired behavior if no files are found using the provided path.
+    
+    - name: Upload docker image scan results
+      uses: actions/upload-artifact@v5.0.0
+      with:
+        # Artifact name
+        name: helloworld_scan_results.txt
+        # A file, directory or wildcard pattern that describes what to upload
+        path: /opt/helloworld_scan_results.txt
+        # The desired behavior if no files are found using the provided path.
+          
